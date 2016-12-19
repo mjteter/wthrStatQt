@@ -147,7 +147,21 @@ enthalpy_btu-lb
 humidity_ratio_gr-lb
 
 
-Temperature       |  Temp.
+Temperatur|e       |  Temp.        |  Temp.
+Dewpoint  |        |  Dewpt.       |  Dewpoint
+Head Index|        |  Ht. Ind.     |  Heat Index
+Wind Chill|        |  Wind Ch.     |  Wind Chill
+Feels Like|        |  Fls Lk       |  Feels Like
+Wet Bulb  |        |  Wt Blb       |  Wet Bulb
+Wind      |        |  Wind         |  Wind
+Wind Gust |        |  Wind Gs      |  Wind Gust
+Pressure  |        |  Pres.        |  Pressure
+Enthalpy  |        |  Enth.        |  Enthalpy
+Relative H|umidity |  Rel. Hum.    |  Rel. Hum.
+Wind Direc|tion    |  Wind Dir.    |  Wind Dir.
+Wind Degre|es      |  Wind Deg.    |  Wind Deg.
+UV        |        |  UV           |  UV
+Humidity R|atio    |  Hum. Rat.    |  Hum. Rat.
 
 
 

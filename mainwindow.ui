@@ -58,17 +58,23 @@
      <string>Off</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="lblCurNm1">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>150</y>
-      <width>59</width>
-      <height>14</height>
+      <x>320</x>
+      <y>10</y>
+      <width>70</width>
+      <height>16</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
     <property name="text">
-     <string>test label</string>
+     <string>Heat Index</string>
     </property>
    </widget>
    <widget class="QLabel" name="lblCurBig">
@@ -76,8 +82,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>310</width>
-      <height>111</height>
+      <width>300</width>
+      <height>110</height>
      </rect>
     </property>
     <property name="font">
@@ -102,6 +108,32 @@
     </property>
     <property name="scaledContents">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblCurData1">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>10</y>
+      <width>40</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>XX.XX</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblCurUnit1">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>10</y>
+      <width>40</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Btu/lb</string>
     </property>
    </widget>
   </widget>

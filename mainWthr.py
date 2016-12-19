@@ -46,14 +46,14 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
                 newStr = getWeatherData.data2string(parsed_json, 'temp_f')
 
                 lblFont = QFont(self.lblCurBig.font())
-                print("lblFont set")
+                # print("lblFont set")
                 # lblFont.setPointSize(lblFont.pointSize() + 18)
                 fit = False
                 while not fit:
                     fm = QFontMetrics(lblFont)
-                    print("fm set")
+                    # print("fm set")
                     bound = QRect(fm.boundingRect(newStr))
-                    print("bound set")
+                    # print("bound set")
                     if (bound.width() > self.lblCurBig.width() or bound.height() > self.lblCurBig.height()):
                         fit = True
                     else:
@@ -77,7 +77,7 @@ def main():
     # a new app instance
     app = QApplication(sys.argv)
     form = MainWindow()
-    # form.setWindowFlags(PyQt5.QtCore.Qt.CustomizeWindowHint)  # turns off frame
+    form.setWindowFlags(PyQt5.QtCore.Qt.CustomizeWindowHint)  # turns off frame
     form.show()
     # without this, the script exits immediately.
     sys.exit(app.exec_())
