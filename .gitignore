@@ -2,3 +2,5 @@
 /__pycache
 *.pyc
 *.pro.user
+*ui.autosave
+/resources/temp

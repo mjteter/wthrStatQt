@@ -1,21 +1,26 @@
 import urllib.request
 import json
 import time
+import os
 
 DEGREE_SIGN = u'\N{DEGREE SIGN}'
 
 def getCurrentData():
-    print('start connection at', str(time.time()))
+    print('start connection at', time.time())
     json_string = urllib.request.urlopen('http://api.wunderground.com/api/aa8135d64b32f422/geolookup/conditions/q/PA/West_chester.json').read().decode('utf8')
-    # json_string = f.read()
+    # print('between urllib and json at', time.time())
     parsed_json = json.loads(json_string)
     # location = parsed_json['location']['city']
     # temp_f = parsed_json['current_observation']['temp_f']
     # print "Current temperature in %s is: %s" % (location, temp_f)
-    # f.close()
-    print('fired at', str(time.time()), 'from', parsed_json['current_observation']['observation_location']['city'])
+    print('fired at', time.time(), 'from', parsed_json['current_observation']['observation_location']['city'])
     return parsed_json
 
+
+def getRadar(radius=7.1, lat=39.973401, lon=-75.563591):
+    urllib.request.urlretrieve('http://api.wunderground.com/api/aa8135d64b32f422/radar/image.gif?centerlat=' + str(lat)
+                               + '&centerlon=' + str(lon) + '&radius=' + str(radius) +
+                               '&width=300&height=300&newmaps=1', os.getcwd() + '/resources/temp/radar.gif')
 
 def data2string(parsed_json, jsonId, units='imperial'):
     # converts weather data to string, making it all pretty
