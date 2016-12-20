@@ -54,10 +54,10 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
 
     def mouseMoveEvent(self, event):  # moves pages on swipe!
         margin = 140
-        if event.x() < margin or event.x() > (320 - margin):
+        if event.x() < margin or event.x() > (320 - margin):  # MUST CHANGE THESE VALUES FOR DIFFERENT RESOLUTIONS
             # print('current:', event.x(), 'old:', self.oldX)
             if time.time() - self.oldXtime < 0.2:
-                if abs(event.x() - self.oldX) > (100):
+                if abs(event.x() - self.oldX) > (100):  # MUST CHANGE THESE VALUES FOR DIFFERENT RESOLUTIONS
                     # print("swipe time:", time.time() - self.oldXtime)
                     # print('current:', event.x(), 'old:', self.oldX)
 

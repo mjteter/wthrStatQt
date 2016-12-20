@@ -92,7 +92,7 @@
      <cursorShape>BlankCursor</cursorShape>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="stkPgCur">
      <widget class="QLabel" name="lblCurDataBig">
@@ -173,7 +173,7 @@
         <string>Today's Forecast</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurNm1_2">
+      <widget class="QLabel" name="lblForNm1">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -200,7 +200,7 @@
         <string>Temperature</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurNm1_3">
+      <widget class="QLabel" name="lblForNm2">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -227,7 +227,7 @@
         <string>Relative Humidity</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurNm1_4">
+      <widget class="QLabel" name="lblForNm3">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -254,7 +254,7 @@
         <string>Wind</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurNm1_5">
+      <widget class="QLabel" name="lblForNm4">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -281,7 +281,7 @@
         <string>Feels Like</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurUnit1_5">
+      <widget class="QLabel" name="lblForUnit1">
        <property name="geometry">
         <rect>
          <x>175</x>
@@ -302,7 +302,7 @@
         <string>Btu/lb</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurUnit1_6">
+      <widget class="QLabel" name="lblForUnit3">
        <property name="geometry">
         <rect>
          <x>175</x>
@@ -323,7 +323,7 @@
         <string>Btu/lb</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurData1_5">
+      <widget class="QLabel" name="lblForData3">
        <property name="geometry">
         <rect>
          <x>135</x>
@@ -344,7 +344,7 @@
         <string>XX.XX</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurUnit1_7">
+      <widget class="QLabel" name="lblForUnit4">
        <property name="geometry">
         <rect>
          <x>175</x>
@@ -365,7 +365,7 @@
         <string>Btu/lb</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurUnit1_8">
+      <widget class="QLabel" name="lblForUnit2">
        <property name="geometry">
         <rect>
          <x>175</x>
@@ -386,7 +386,7 @@
         <string>Btu/lb</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurData1_6">
+      <widget class="QLabel" name="lblForData1">
        <property name="geometry">
         <rect>
          <x>135</x>
@@ -407,7 +407,7 @@
         <string>XX.XX</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurData1_7">
+      <widget class="QLabel" name="lblForData4">
        <property name="geometry">
         <rect>
          <x>135</x>
@@ -428,7 +428,7 @@
         <string>XX.XX</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurData1_8">
+      <widget class="QLabel" name="lblForData2">
        <property name="geometry">
         <rect>
          <x>135</x>
@@ -550,7 +550,7 @@
         <string>XX.XX</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurNm1_6">
+      <widget class="QLabel" name="lblCurNm2">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -577,7 +577,7 @@
         <string>Relative Humidity</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurNm1_7">
+      <widget class="QLabel" name="lblCurNm3">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -604,7 +604,7 @@
         <string>Wind</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurNm1_8">
+      <widget class="QLabel" name="lblCurNm4">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -631,7 +631,7 @@
         <string>Feels Like</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurUnit1_2">
+      <widget class="QLabel" name="lblCurUnit2">
        <property name="geometry">
         <rect>
          <x>175</x>
@@ -652,7 +652,7 @@
         <string>Btu/lb</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurData1_2">
+      <widget class="QLabel" name="lblCurData2">
        <property name="geometry">
         <rect>
          <x>135</x>
@@ -673,7 +673,7 @@
         <string>XX.XX</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurUnit1_3">
+      <widget class="QLabel" name="lblCurUnit3">
        <property name="geometry">
         <rect>
          <x>175</x>
@@ -694,7 +694,7 @@
         <string>Btu/lb</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurData1_3">
+      <widget class="QLabel" name="lblCurData3">
        <property name="geometry">
         <rect>
          <x>135</x>
@@ -715,7 +715,7 @@
         <string>XX.XX</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurUnit1_4">
+      <widget class="QLabel" name="lblCurUnit4">
        <property name="geometry">
         <rect>
          <x>175</x>
@@ -736,7 +736,7 @@
         <string>Btu/lb</string>
        </property>
       </widget>
-      <widget class="QLabel" name="lblCurData1_4">
+      <widget class="QLabel" name="lblCurData4">
        <property name="geometry">
         <rect>
          <x>135</x>
