@@ -123,13 +123,16 @@
        <string notr="true"/>
       </property>
       <property name="text">
-       <string>20.4 mph</string>
+       <string>NA</string>
       </property>
       <property name="scaledContents">
        <bool>true</bool>
       </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="frmForWthr">
       <property name="geometry">
        <rect>
         <x>245</x>
@@ -197,7 +200,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Temperature</string>
+        <string>High Temperature</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForNm2">
@@ -224,7 +227,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Relative Humidity</string>
+        <string>Low Temperature</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForNm3">
@@ -251,7 +254,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Wind</string>
+        <string>Average Humidity</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForNm4">
@@ -278,13 +281,13 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Feels Like</string>
+        <string>Average Wind</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForUnit1">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>180</x>
          <y>60</y>
          <width>40</width>
          <height>16</height>
@@ -299,13 +302,13 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Btu/lb</string>
+        <string>°F</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForUnit3">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>180</x>
          <y>100</y>
          <width>40</width>
          <height>16</height>
@@ -320,7 +323,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Btu/lb</string>
+        <string>%</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForData3">
@@ -341,13 +344,16 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>XX.XX</string>
+        <string>NA</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="lblForUnit4">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>180</x>
          <y>120</y>
          <width>40</width>
          <height>16</height>
@@ -362,13 +368,13 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Btu/lb</string>
+        <string>mph</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForUnit2">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>180</x>
          <y>80</y>
          <width>40</width>
          <height>16</height>
@@ -383,7 +389,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Btu/lb</string>
+        <string>°F</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForData1">
@@ -404,7 +410,10 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>XX.XX</string>
+        <string>NA</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="lblForData4">
@@ -425,7 +434,10 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>XX.XX</string>
+        <string>NA</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="lblForData2">
@@ -446,11 +458,14 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>XX.XX</string>
+        <string>NA</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </widget>
-     <widget class="QFrame" name="frame_2">
+     <widget class="QFrame" name="frmCurWthr">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -484,7 +499,7 @@
       <widget class="QLabel" name="lblCurUnit1">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>180</x>
          <y>60</y>
          <width>40</width>
          <height>16</height>
@@ -499,7 +514,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Btu/lb</string>
+        <string>in</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblCurNm1">
@@ -547,7 +562,10 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>XX.XX</string>
+        <string>NA</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="lblCurNm2">
@@ -634,7 +652,7 @@
       <widget class="QLabel" name="lblCurUnit2">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>180</x>
          <y>80</y>
          <width>40</width>
          <height>16</height>
@@ -649,7 +667,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Btu/lb</string>
+        <string>%</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblCurData2">
@@ -670,13 +688,16 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>XX.XX</string>
+        <string>NA</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="lblCurUnit3">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>180</x>
          <y>100</y>
          <width>40</width>
          <height>16</height>
@@ -691,7 +712,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Btu/lb</string>
+        <string>mph</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblCurData3">
@@ -712,13 +733,16 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>XX.XX</string>
+        <string>NA</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="lblCurUnit4">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>180</x>
          <y>120</y>
          <width>40</width>
          <height>16</height>
@@ -733,7 +757,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Btu/lb</string>
+        <string>°F</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblCurData4">
@@ -754,7 +778,10 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>XX.XX</string>
+        <string>NA</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="label_9">
@@ -814,8 +841,8 @@
        <enum>Qt::AutoText</enum>
       </property>
      </widget>
-     <zorder>frame_2</zorder>
-     <zorder>frame</zorder>
+     <zorder>frmCurWthr</zorder>
+     <zorder>frmForWthr</zorder>
      <zorder>lblCurDataBig</zorder>
      <zorder>lblWthrIcon</zorder>
      <zorder>lblCurNmBig</zorder>
@@ -864,6 +891,21 @@
      </widget>
      <zorder>lblRdrImg</zorder>
      <zorder>label_2</zorder>
+    </widget>
+    <widget class="QWidget" name="stkPgGraph">
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>160</y>
+        <width>59</width>
+        <height>14</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Graph</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="stkPgStg">
      <property name="cursor">

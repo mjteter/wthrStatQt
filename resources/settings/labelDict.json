@@ -1,0 +1,15 @@
+{
+  "current": {
+    "big": "temp_f",
+    "1": "pressure_in",
+    "2": "relative_humidity",
+    "3": "wind_mph",
+    "4": "feelslike_f"
+  },
+  "forecast": {
+    "1": "high,fahrenheit",
+    "2": "low,fahrenheit",
+    "3": "avewind,speed",
+    "4": "avehumidity"
+  }
+}
