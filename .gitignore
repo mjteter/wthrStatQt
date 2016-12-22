@@ -3,5 +3,5 @@
 *.pyc
 *.pro.user
 *ui.autosave
-/resources/temp
-/resources/keys
+/resources/temp/**/*.gif
+/resources/keys/**/*.key.txt
