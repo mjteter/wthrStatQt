@@ -44,7 +44,7 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
                                [self.lblCurData4, '4', 'temp_f']]
 
         try:
-            self.wu_key = open(os.getcwd() + '/resources/keys/local_key.txt', 'r').read()
+            self.wu_key = open(os.getcwd() + '/resources/keys/local.key.txt', 'r').read().strip('\n')
         except FileNotFoundError:
             print("NO WU KEY FOUND!  PROGRAM WON'T RUN!")
             while True:
