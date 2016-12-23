@@ -1,0 +1,1124 @@
+
+
+Function embedpsych(var As String, state1 As String, v1 As Double, state2 As String, v2 As Double, Optional alt As Double) As Variant
+
+'var = variable to be solved for
+'state1 = state 1 type
+'v1 = state 1 value
+'state2 = state 2 type
+'v2 = state 2 value
+'alt = altitude (ft) [optional, default 0]
+    
+'DB = dry bulb temperature (deg F)
+'WB = wet bulb temperature (deg F)
+'DP = dew point temperature (deg F)
+'RH = relative humidity (ratio)
+'HR = humidity ratio (lb. moisture / lb. dry air)
+'SV = specific volume (ft^3 / lb. dry air)
+'EN = enthalpy (BTU / lb. dry air)
+
+Dim DB As Double: Dim WB As Double: Dim DP As Double: Dim RH As Double
+Dim HR As Double: Dim SV As Double: Dim EN As Double: Dim pw As Double
+Dim pwst As Double: Dim pwsta As Double: Dim ws As Double: Dim wsa As Double
+Dim mu As Double: Dim DBR As Double: Dim WBR As Double: Dim DPR As Double
+Dim i As Integer: Dim HR2 As Double: Dim pr As Double: Dim hwa As Double
+Dim hsa As Double: Dim a As Double: Dim b As Double: Dim c As Double
+Dim pw2 As Double: Dim DB2 As Double: Dim DB3 As Double: Dim DB4 As Double
+
+If IsMissing(alt) Then alt = 0
+
+pr = 14.696 * (1 - 0.0000068753 * alt) ^ 5.2559
+
+If state1 = "DB" Then
+    DB = v1
+ElseIf state2 = "DB" Then
+    DB = v2
+End If
+
+If state1 = "WB" Then
+    WB = v1
+ElseIf state2 = "WB" Then
+    WB = v2
+End If
+    
+If state1 = "DP" Then
+    DP = v1
+ElseIf state2 = "DP" Then
+    DP = v2
+End If
+
+If state1 = "RH" Then
+    RH = v1
+ElseIf state2 = "RH" Then
+    RH = v2
+End If
+
+If state1 = "HR" Then
+    HR = v1
+ElseIf state2 = "HR" Then
+    HR = v2
+End If
+
+If state1 = "SV" Then
+    SV = v1
+ElseIf state2 = "SV" Then
+    SV = v2
+End If
+
+If state1 = "EN" Then
+    EN = v1
+ElseIf state2 = "EN" Then
+    EN = v2
+End If
+
+If HR < 0 Then GoTo low
+If RH < 0 Then GoTo low
+
+'*************************
+
+'DB known
+If state1 = "DB" Or state2 = "DB" Then
+
+'DB+WB
+If state1 = "WB" Or state2 = "WB" Then
+
+DBR = DB + 459.67
+WBR = WB + 459.67
+
+pwsta = satpr(WBR)
+
+wsa = 0.62198 * pwsta / (pr - pwsta)
+
+HR = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+If RH < 0 Then GoTo low
+
+pwst = satpr(DBR)
+
+ws = 0.62198 * pwst / (pr - pwst)
+
+mu = HR / ws
+
+RH = mu / (1 - (1 - mu) * (pwst / pr))
+
+If RH < 0 Then GoTo low
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+pw = (pr * HR) / (0.62198 + HR)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+End If 'close DB+WB
+
+
+'DB+DP
+If state1 = "DP" Or state2 = "DP" Then
+
+DPR = DP + 459.67
+DBR = DB + 459.67
+
+pw = satpr(DPR)
+
+HR = 0.62198 * pw / (pr - pw)
+If HR < 0 Then GoTo low
+
+pwst = satpr(DBR)
+
+ws = 0.62198 * pwst / (pr - pwst)
+
+mu = HR / ws
+
+RH = mu / (1 - (1 - mu) * (pwst / pr))
+If RH < 0 Then GoTo low
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+WB = DB
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+    
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close DB+DP
+
+
+'DB+RH
+If state1 = "RH" Or state2 = "RH" Then
+
+DBR = DB + 459.67
+
+pwst = satpr(DBR)
+
+pw = pwst * RH
+
+HR = 0.62198 * pw / (pr - pw)
+If HR < 0 Then GoTo low
+
+ws = 0.62198 * pwst / (pr - pwst)
+
+mu = HR / ws
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+WB = DB
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close DB+RH
+
+
+'DB+HR
+If state1 = "HR" Or state2 = "HR" Then
+
+DBR = DB + 459.67
+
+pwst = satpr(DBR)
+
+pw = HR * pr / (HR + 0.62198)
+
+RH = pw / pwst
+If RH < 0 Then GoTo low
+
+ws = 0.62198 * pwst / (pr - pwst)
+
+mu = HR / ws
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+WB = DB
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close DB+HR
+
+
+'DB+SV
+If state1 = "SV" Or state2 = "SV" Then
+
+DBR = DB + 459.67
+
+pwst = satpr(DBR)
+
+HR = (SV * 28.9645 * (pr * 144) / (1545.32 * DBR) - 1) / 1.6078
+If HR < 0 Then GoTo low
+
+pw = HR * pr / (HR + 0.62198)
+
+RH = pw / pwst
+If RH < 0 Then GoTo low
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+WB = DB
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close DB+SV
+
+
+'DB+EN
+If state1 = "EN" Or state2 = "EN" Then
+
+DBR = DB + 459.67
+
+pwst = satpr(DBR)
+
+HR = (EN - 0.24 * DB) / (1061 + 0.444 * DB)
+If HR < 0 Then GoTo low
+
+pw = HR * pr / (HR + 0.62198)
+
+RH = pw / pwst
+If RH < 0 Then GoTo low
+
+ws = 0.62198 * pwst / (pr - pwst)
+
+mu = HR / ws
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+WB = DB
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close DB+EN
+
+End If ' close DB
+
+'*************************
+
+'WB known
+If state1 = "WB" Or state2 = "WB" Then
+
+'WB+DP
+If state1 = "DP" Or state2 = "DP" Then
+
+DPR = DP + 459.67
+WBR = WB + 459.67
+
+pw = satpr(DPR)
+
+HR = 0.62198 * pw / (pr - pw)
+If HR < 0 Then GoTo low
+
+pwsta = satpr(WBR)
+
+wsa = 0.62198 * pwsta / (pr - pwsta)
+
+DB = ((1093 - 0.556 * WB) * wsa + 0.24 * WB - (1093 - WB) * HR) / (0.444 * HR + 0.24)
+
+DBR = DB + 459.67
+
+pwst = satpr(DBR)
+
+ws = 0.62198 * pwst / (pr - pwst)
+
+mu = HR / ws
+
+RH = mu / (1 - (1 - mu) * (pwst / pr))
+If RH < 0 Then GoTo low
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+End If 'close WB+DP
+
+
+'WB+RH
+If state1 = "RH" Or state2 = "RH" Then
+
+WBR = WB + 459.67
+
+pwsta = satpr(WBR)
+
+wsa = 0.62198 * pwsta / (pr - pwsta)
+
+DB = WB
+DBR = DB + 459.67
+
+Do While i < 500
+    i = i + 1
+
+    pwst = satpr(DBR)
+    
+    ws = 0.62198 * pwst / (pr - pwst)
+    
+    mu = RH * (1 - pwst / pr) / (1 - RH * (pwst / pr))
+     
+    HR = mu * ws
+ 
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DBR = DBR * (HR2 / HR) ^ 0.01
+
+    DB = DBR - 459.67
+Loop
+If HR < 0 Then GoTo low
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+pw = (pr * HR) / (0.62198 + HR)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+End If 'close WB+RH
+
+
+'WB+HR
+If state1 = "HR" Or state2 = "HR" Then
+
+WBR = WB + 459.67
+
+pwsta = satpr(WBR)
+
+wsa = 0.62198 * pwsta / (pr - pwsta)
+
+DB = ((1093 - 0.556 * WB) * wsa + 0.24 * WB - (1093 - WB) * HR) / (0.444 * HR + 0.24)
+
+DBR = DB + 459.67
+
+pwst = satpr(DBR)
+
+ws = 0.62198 * pwst / (pr - pwst)
+
+mu = HR / ws
+
+RH = mu / (1 - (1 - mu) * (pwst / pr))
+If RH < 0 Then GoTo low
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+pw = (pr * HR) / (0.62198 + HR)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+End If 'close WB+HR
+
+
+'WB+SV
+If state1 = "SV" Or state2 = "SV" Then
+
+WBR = WB + 459.67
+
+pwsta = satpr(WBR)
+
+wsa = 0.62198 * pwsta / (pr - pwsta)
+
+DB = WB
+DBR = DB + 459.67
+
+Do While i < 500
+    i = i + 1
+  
+    HR = (SV * 28.9645 * (pr * 144) / (1545.32 * DBR) - 1) / 1.6078
+ 
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DBR = DBR * (HR / HR2) ^ 0.01
+
+    DB = DBR - 459.67
+Loop
+
+If HR < 0 Then GoTo low
+
+pwst = satpr(DBR)
+    
+ws = 0.62198 * pwst / (pr - pwst)
+    
+mu = HR / ws
+
+RH = mu / (1 - (1 - mu) * (pwst / pr))
+If RH < 0 Then GoTo low
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+pw = (pr * HR) / (0.62198 + HR)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+End If 'close WB+SV
+
+End If ' close WB
+
+'*************************
+
+'DP known
+If state1 = "DP" Or state2 = "DP" Then
+
+'DP+RH
+If state1 = "RH" Or state2 = "RH" Then
+
+DPR = DP + 459.67
+
+pw = satpr(DPR)
+
+HR = 0.62198 * pw / (pr - pw)
+If HR < 0 Then GoTo low
+
+pws = pw / RH
+
+DB = DP
+
+Do While i < 500
+    i = i + 1
+
+    DBR = DB + 459.67
+
+    pws2 = satpr(DBR)
+
+    If Abs(pws2 / pws - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DB = DB * (pws / pws2) ^ 0.01
+Loop
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+WB = DB: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close DP+RH
+
+
+'DP+SV
+If state1 = "SV" Or state2 = "SV" Then
+
+DPR = DP + 459.67
+
+pw = satpr(DPR)
+
+HR = 0.62198 * pw / (pr - pw)
+If HR < 0 Then GoTo low
+
+DBR = (SV * 28.9645 * (pr * 144)) / (1545.32 * (1 + HR * 1.6078))
+
+DB = DBR - 459.67
+
+pwst = satpr(DBR)
+
+RH = pw / pwst
+If RH < 0 Then GoTo low
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+WB = DB: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close DP+SV
+
+
+'DP+EN
+If state1 = "EN" Or state2 = "EN" Then
+
+DPR = DP + 459.67
+
+pw = satpr(DPR)
+
+HR = 0.62198 * pw / (pr - pw)
+If HR < 0 Then GoTo low
+
+DB = (EN - 1061 * HR) / (0.444 * HR + 0.24)
+
+DBR = DB + 459.67
+
+pwst = satpr(DBR)
+
+pw = HR * pr / (HR + 0.62198)
+
+RH = pw / pwst
+If RH < 0 Then GoTo low
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+WB = DB
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close DP+EN
+
+End If ' close DP
+
+'*************************
+
+'HR known
+If state1 = "HR" Or state2 = "HR" Then
+
+'HR+RH
+If state1 = "RH" Or state2 = "RH" Then
+
+pw = pr / (1 + 0.62198 / HR)
+
+DP = 50
+
+Do While i < 500
+    i = i + 1
+
+    DPR = DP + 459.67
+
+    pw2 = satpr(DPR)
+
+    If Abs(pw2 / pw - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DP = DP * (pw / pw2) ^ 0.01
+Loop
+
+DPR = DP + 459.67
+
+pws = pw / RH
+
+DB = DP: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    DBR = DB + 459.67
+
+    pws2 = satpr(DBR)
+
+    If Abs(pws2 / pws - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DB = DB * (pws / pws2) ^ 0.01
+Loop
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+WB = DB: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+    
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close HR+RH
+
+
+'HR+SV
+If state1 = "SV" Or state2 = "SV" Then
+
+pw = pr / (1 + 0.62198 / HR)
+
+DP = 50
+
+Do While i < 500
+    i = i + 1
+
+    DPR = DP + 459.67
+
+    pw2 = satpr(DPR)
+
+    If Abs(pw2 / pw - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DP = DP * (pw / pw2) ^ 0.01
+Loop
+
+DPR = DP + 459.67
+
+DBR = (SV * 28.9645 * (pr * 144)) / (1545.32 * (1 + HR * 1.6078))
+
+DB = DBR - 459.67
+
+pwst = satpr(DBR)
+
+RH = pw / pwst
+If RH < 0 Then GoTo low
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+WB = DB: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close HR+SV
+
+
+'HR+EN
+If state1 = "EN" Or state2 = "EN" Then
+
+pw = pr / (1 + 0.62198 / HR)
+
+DP = 50
+
+Do While i < 500
+    i = i + 1
+
+    DPR = DP + 459.67
+
+    pw2 = satpr(DPR)
+
+    If Abs(pw2 / pw - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DP = DP * (pw / pw2) ^ 0.01
+Loop
+
+DPR = DP + 459.67
+
+DB = (EN - 1061 * HR) / (0.444 * HR + 0.24)
+
+DBR = DB + 459.67
+
+pwst = satpr(DBR)
+
+pw = HR * pr / (HR + 0.62198)
+
+RH = pw / pwst
+If RH < 0 Then GoTo low
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+WB = DB: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close HR+EN
+
+End If ' close HR
+
+'*************************
+
+'RH known
+If state1 = "RH" Or state2 = "RH" Then
+
+'RH+SV
+If state1 = "SV" Or state2 = "SV" Then
+
+DB = 50
+
+Do While i < 500
+    i = i + 1
+
+    DBR = DB + 459.67
+
+    pwst = satpr(DBR)
+
+    pw = pwst * RH
+
+    HR = 0.62198 * pw / (pr - pw)
+
+    HR2 = (SV * 28.9645 * (pr * 144) / (1545.32 * DBR) - 1) / 1.6078
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DB = DB * (HR2 / HR) ^ 0.01
+Loop
+
+If HR < 0 Then GoTo low
+
+EN = 0.24 * DB + HR * (1061 + 0.444 * DB)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+WB = DB: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close RH+SV
+
+
+'RH+EN
+If state1 = "EN" Or state2 = "EN" Then
+
+DB = 50
+
+Do While i < 500
+    i = i + 1
+
+    DBR = DB + 459.67
+
+    pwst = satpr(DBR)
+
+    pw = pwst * RH
+
+    HR = 0.62198 * pw / (pr - pw)
+
+    HR2 = (EN - 0.24 * DB) / (1061 + 0.444 * DB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DB = DB * (HR2 / HR) ^ 0.01
+Loop
+
+If HR < 0 Then GoTo low
+
+SV = 1545.32 * DBR * (1 + 1.6078 * HR) / (28.9645 * pr * 144)
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+WB = DB: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close RH+EN
+
+End If ' close RH
+
+'*************************
+
+'SV known
+If state1 = "SV" Or state2 = "SV" Then
+
+'SV+EN
+If state1 = "EN" Or state2 = "EN" Then
+
+DB = 50
+
+Do While i < 500
+    i = i + 1
+
+    Debug.Print i
+    Debug.Print DB
+
+    DBR = DB + 459.67
+
+    HR = (SV * 28.9645 * (pr * 144) / (1545.32 * DBR) - 1) / 1.6078
+
+    HR2 = (EN - 0.24 * DB) / (1061 + 0.444 * DB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    DB = DB * (HR / HR2) ^ 0.01
+Loop
+
+If HR < 0 Then GoTo low
+
+pwst = satpr(DBR)
+
+pw = HR * pr / (HR + 0.62198)
+
+RH = pw / pwst
+If RH < 0 Then GoTo low
+
+DP = 100.45 + 33.193 * Log(pw) + 2.319 * (Log(pw)) ^ 2 + 0.17074 * (Log(pw)) ^ 3 + 1.2063 * (pw) ^ 0.1984
+
+If DP < 32 Then
+    DP = 90.12 + 26.142 * Log(pw) + 0.8927 * (Log(pw)) ^ 2
+End If
+
+WB = DB: i = 0
+
+Do While i < 500
+    i = i + 1
+
+    WBR = WB + 459.67
+
+    pwsta = satpr(WBR)
+    
+    wsa = 0.62198 * pwsta / (pr - pwsta)
+    
+    HR2 = (wsa * (1093 - 0.556 * WB) - 0.24 * (DB - WB)) / (1093 + 0.444 * DB - WB)
+
+    If Abs(HR2 / HR - 1) < 0.000001 Then
+        Exit Do
+    End If
+
+    WB = WB * (HR / HR2) ^ 0.01
+Loop
+
+End If 'close SV+EN
+
+End If ' close SV
+
+'*************************
+
+Select Case var
+Case "DB"
+    embedpsych = DB
+Case "WB"
+    embedpsych = WB
+Case "DP"
+    embedpsych = DP
+Case "RH"
+    embedpsych = RH
+Case "HR"
+    embedpsych = HR
+Case "SV"
+    embedpsych = SV
+Case "EN"
+    embedpsych = EN
+Case Else
+    Exit Function
+End Select
+
+If RH > 1 Then
+    embedpsych = CVErr(xlErrNum)
+End If
+Exit Function
+
+low:
+    embedpsych = CVErr(xlErrNum)
+
+End Function
+Private Function satpr(temp As Double) As Double
+
+If temp - 459.67 > 32 Then
+    satpr = Exp(-10440.397 / temp + -11.29465 + -0.027022355 * temp + 0.00001289036 * temp ^ 2 _
+        + -2.4780681E-09 * temp ^ 3 + 6.5459673 * Log(temp))
+Else
+    satpr = Exp(-10214.165 / temp + -4.8932428 + -0.0053765794 * temp + 0.00000019202377 * temp ^ 2 _
+        + 3.5575832E-10 * temp ^ 3 + -9.0344688E-14 * temp ^ 4 + 4.1635019 * Log(temp))
+End If
+
+End Function
+
+
+
+
+
+
+
+
+
+
