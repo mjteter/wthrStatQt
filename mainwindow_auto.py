@@ -327,7 +327,7 @@ class Ui_MainWindow(object):
         self.lblForNm1.setText(_translate("MainWindow", "High Temperature"))
         self.lblForNm2.setText(_translate("MainWindow", "Low Temperature"))
         self.lblForNm3.setText(_translate("MainWindow", "Average Humidity"))
-        self.lblForNm4.setText(_translate("MainWindow", "Average Wind"))
+        self.lblForNm4.setText(_translate("MainWindow", "Avg. Relative Humdity"))
         self.lblForUnit1.setText(_translate("MainWindow", "°F"))
         self.lblForUnit3.setText(_translate("MainWindow", "%"))
         self.lblForData3.setText(_translate("MainWindow", "NA"))

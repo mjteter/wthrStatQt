@@ -281,7 +281,7 @@
         <cursorShape>BlankCursor</cursorShape>
        </property>
        <property name="text">
-        <string>Average Wind</string>
+        <string>Avg. Relative Humdity</string>
        </property>
       </widget>
       <widget class="QLabel" name="lblForUnit1">

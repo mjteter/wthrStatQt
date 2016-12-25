@@ -29,58 +29,69 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
         self.startTimeCur = 0  # current observations
         self.startTimeFor = 0  # short forecast
         self.startTimeRdr = 0  # radar
-        self.startTimeLongFor = 0  # long forecast
 
         self.timeoutCur = 30  # 600 for 10 mins
         self.timeoutFor = 10000  # 3600 for 1 hr
         self.timeoutRdr = 10000  # 900 for 15 mins
-        self.timeoutLongFor = 21600  # 21600 for every 6 hrs
 
         self.oldX = 10000
         self.oldXtime = 0
 
-        self.cur_label_list = [[self.lblCurDataBig, 'big', 'temp_f'], [self.lblCurData1, '1', 'temp_f'],
-                               [self.lblCurData2, '2', 'temp_f'], [self.lblCurData3, '3', 'temp_f'],
-                               [self.lblCurData4, '4', 'temp_f']]
+        self.cur_label_list = [[self.lblCurDataBig, 'big', 'temp', self.lblCurNmBig, None],
+                               [self.lblCurData1, '1', 'temp', self.lblCurNm1, self.lblCurUnit1],
+                               [self.lblCurData2, '2', 'temp', self.lblCurNm2, self.lblCurUnit2],
+                               [self.lblCurData3, '3', 'temp', self.lblCurNm3, self.lblCurUnit3],
+                               [self.lblCurData4, '4', 'temp', self.lblCurNm4, self.lblCurUnit4]]
+        self.cur_for_label_list = [[self.lblForData1, '1', 'high', self.lblForNm1, self.lblForUnit1],
+                                   [self.lblForData2, '2', 'high', self.lblForNm2, self.lblForUnit2],
+                                   [self.lblForData3, '3', 'high', self.lblForNm3, self.lblForUnit3],
+                                   [self.lblForData4, '4', 'high', self.lblForNm4, self.lblForUnit4]]
 
-        try:
-            self.wu_key = open(os.getcwd() + '/resources/keys/local.key.txt', 'r').read().strip('\n')
-        except FileNotFoundError:
-            print("NO WU KEY FOUND!  PROGRAM WON'T RUN!")
-            while True:
-                pass
+        # try:
+        #     wu_key = open(os.getcwd() + '/resources/keys/local.key.txt', 'r').read().strip('\n')
+        # except FileNotFoundError:
+        #     print("NO WU KEY FOUND!  PROGRAM WON'T RUN!")
+        #     while True:
+        #         pass
+
+        self.data_handler = getWeatherData.AllWeatherData(os.getcwd() + '/resources/keys/local.key.txt')
 
         self.lblWthrIcon.setPixmap(QPixmap(os.getcwd() + '/resources/icons/partlycloudy1.png'))
 
         self.cbxCurDataStat.addItem('West Chester: KPAWESTC28')
 
         self.set_current_labels()
+        self.set_cur_forecast_labels()
 
         Thread(target=self.get_wu_data).start()
 
     def get_wu_data(self):
         while True:
             if time.time() - self.startTimeCur > self.timeoutCur:
-                parsed_json = getWeatherData.get_current_data(self.wu_key)
+                self.data_handler.update_current_data()
 
-                reset_font_size(self.cur_label_list[0][0],
-                                getWeatherData.cur_data_2_string(parsed_json, self.cur_label_list[0][2],
-                                                                 include_units=True))
+                reset_font_size(self.cur_label_list[0][0], self.data_handler.current_data[self.cur_label_list[0][2]] +
+                                ' ' + self.data_handler.get_units(self.cur_label_list[0][2]))
+
                 for lbl_list in self.cur_label_list[1:]:
-                    lbl_list[0].setText(getWeatherData.cur_data_2_string(parsed_json, lbl_list[2]))
-                # self.resetFontSize(self.lblCurDataBig, getWeatherData.cur_data_2_string(parsed_json, 'temp_f'))
+                    lbl_list[0].setText(self.data_handler.current_data[lbl_list[2]])
 
                 self.startTimeCur = time.time()
 
             if time.time() - self.startTimeFor > self.timeoutFor:
+                self.data_handler.update_forecast_data()
+
+                for lbl_list in self.cur_for_label_list:
+                    lbl_list[0].setText(self.data_handler.forecast_data['period1'][lbl_list[2]])
+
+                # set labels in forecast tab
+
                 self.startTimeFor = time.time()
 
-            if time.time() - self.startTimeLongFor > self.timeoutLongFor:
-                self.startTimeLongFor = time.time()
-
             if time.time() - self.startTimeRdr > self.timeoutRdr:
-                getWeatherData.get_radar(self.wu_key)
-                self.lblRdrImg.setPixmap(QPixmap(os.getcwd() + '/resources/temp/radar.gif'))
+                # NEED SOME SORT OF ERROR HANDLING IF IT GOES BAD
+                store_loc = self.data_handler.update_radar()
+                self.lblRdrImg.setPixmap(QPixmap(store_loc))
                 self.startTimeRdr = time.time()
 
     def mouseMoveEvent(self, event):  # moves pages on swipe!
@@ -110,6 +121,16 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
         cur_label_dict = getSettingsData.get_label_dict()
         for lbl_list in self.cur_label_list:
             lbl_list[2] = cur_label_dict['current'][lbl_list[1]]
+            lbl_list[3].setText(self.data_handler.get_data_type_str(lbl_list[2]))
+            if lbl_list[4] is not None:
+                lbl_list[4].setText(self.data_handler.get_units(lbl_list[2]))
+
+    def set_cur_forecast_labels(self):
+        for_label_dict = getSettingsData.get_label_dict()
+        for lbl_list in self.cur_for_label_list:
+            lbl_list[2] = for_label_dict['forecast'][lbl_list[1]]
+            lbl_list[3].setText(self.data_handler.get_data_type_str(lbl_list[2]))
+            lbl_list[4].setText(self.data_handler.get_units(lbl_list[2]))
 
 
 def reset_font_size(q_label, data_str):
